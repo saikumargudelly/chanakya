@@ -8,13 +8,28 @@ A full-stack, modular web application that provides intelligent financial guidan
 - Fetch and update user profile (first/last name, email, mobile, address)
 - Password reset (upsert password via email)
 - Track income and expenses
-- Log mood (emotional wellness)
+- Mood Tracker with PERMA model (Positive Emotion, Engagement, Relationships, Meaning, Accomplishment)
+- Limit to 2 mood check-ins per user per day for healthy usage
+- MoodSession model for storing mood analytics, answers, and summaries
 - Personalized budgeting advice (GPT-4 or Groq API)
 - Chat memory and natural conversation
-- Mood-aware prompts
+- Mood-aware prompts and mood-based AI suggestions
 - Robust error handling and validation
-- Modern, responsive frontend UI with improved UX
+- Modern, responsive frontend UI (React, Tailwind, Recharts)
 - Docker-ready and environment-based config
+- Secure API endpoints, .env never committed to git
+
+## PERMA Model in Mood Tracker
+
+The Mood Tracker is based on the PERMA model of well-being, which measures:
+
+- **P**ositive Emotion
+- **E**ngagement
+- **R**elationships
+- **M**eaning
+- **A**ccomplishment
+
+Users answer daily questions aligned to each pillar, helping track and improve overall well-being through actionable AI insights.
 
 ## Tech Stack
 - **Frontend:** React, Tailwind CSS, Recharts, Axios

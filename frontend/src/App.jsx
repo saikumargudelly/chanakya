@@ -156,7 +156,7 @@ function AppContent() {
           <Route path="/mood" element={
             <div className="flex-1 flex flex-col gap-8">
               <MoodTracker />
-              <ChatBox />
+              {/* <ChatBox /> Removed: Only PERMA AI chat remains in MoodTracker */}
             </div>
           } />
           <Route path="/budget-analytics" element={<BudgetAnalytics />} />
