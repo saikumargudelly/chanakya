@@ -9,7 +9,7 @@ const Sidebar = () => (
     </div>
     <nav className="flex flex-col gap-4">
       <Link to="/" className="hover:bg-gray-800 rounded px-3 py-2 transition block">Dashboard</Link>
-      <Link to="/budget-analytics" className="hover:bg-gray-800 rounded px-3 py-2 transition block">Budget Tracker</Link>
+      <Link to="/budget-analytics" className="hover:bg-gray-800 rounded px-3 py-2 transition block">My Analytics</Link>
       <Link to="/financial-position" className="hover:bg-gray-800 rounded px-3 py-2 transition block">Financial Position</Link>
       <Link to="/mood" className="hover:bg-gray-800 rounded px-3 py-2 transition block">Mood Tracker</Link>
       <span className="hover:bg-gray-800 rounded px-3 py-2 transition block text-gray-500 cursor-not-allowed">Ask Chanakya</span>

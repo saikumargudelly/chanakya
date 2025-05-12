@@ -132,7 +132,7 @@ export default function FinancialPosition({ onClose }) {
             if (typeof onClose === 'function') onClose();
             else window.location.hash = '#budget';
           }}
-          title="Return to Budget Tracker"
+          title="Return to My Analytics"
         >
           Close & Return
         </button>

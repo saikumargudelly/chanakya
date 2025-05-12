@@ -145,7 +145,7 @@ const BudgetForm = () => {
         ) : (
           <>
             <h2 className="text-2xl font-bold mb-4 text-green-700 dark:text-green-300 tracking-tight flex items-center gap-2">
-              <span>💸</span> Budget Tracker
+              <span>📊</span> My Analytics
               <button className="ml-auto px-3 py-1 rounded bg-blue-600 text-white text-xs hover:bg-blue-700 transition" onClick={() => setShowFinancialPosition(true)}>
                 Open Financial Position
               </button>

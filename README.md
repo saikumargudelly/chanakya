@@ -33,9 +33,65 @@ Users answer daily questions aligned to each pillar, helping track and improve o
 
 ## Tech Stack
 - **Frontend:** React, Tailwind CSS, Recharts, Axios
-- **Backend:** Flask, LangChain, SQLAlchemy, Alembic, CORS
+- **Backend:** Flask, LangChain, SQLAlchemy, Alembic, Flask-JWT-Extended, Flask-Mail, CORS
 - **AI:** GPT-4 (OpenAI) or Groq API
 - **Other:** Docker, .env for secrets, responsive UI
+
+---
+
+## Getting Started
+
+### Prerequisites
+- Python 3.10+
+- Node.js (v18+ recommended)
+- npm or yarn
+
+### Backend Setup
+1. Navigate to `backend/`:
+   ```bash
+   cd backend
+   ```
+2. Create a `.env` file (see `.env.example` if present) and set your environment variables (e.g., `OPENAI_API_KEY`, database URL, JWT secret, mail server config, etc.).
+3. Install dependencies:
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. Run migrations:
+   ```bash
+   alembic upgrade head
+   ```
+5. Start the backend:
+   ```bash
+   flask run
+   ```
+
+### Frontend Setup
+1. Navigate to `frontend/`:
+   ```bash
+   cd frontend
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   # or
+   yarn install
+   ```
+3. Start the frontend:
+   ```bash
+   npm start
+   # or
+   yarn start
+   ```
+
+---
+
+### Environment Variables
+- Never commit `.env` to version control. Ensure `.env` is listed in `.gitignore`.
+- Required variables for backend include: `OPENAI_API_KEY`, `DATABASE_URL`, `JWT_SECRET_KEY`, `MAIL_SERVER`, etc.
+- For AI features, set either `OPENAI_API_KEY` or `GROQ_API_KEY` as appropriate.
+
+---
+
 
 ## Project Structure
 ```

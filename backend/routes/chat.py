@@ -10,7 +10,7 @@ import datetime
 
 from db.models import ChatHistory
 from utils.helpers import format_expenses
-from chanakya_chain.prompts import GENERAL_PROMPT_TEMPLATE, PERMA_PROMPT_TEMPLATE
+from chanakya_chain.prompts import GENERAL_PROMPT_TEMPLATE
 
 chat_bp = Blueprint('chat', __name__)
 
@@ -72,7 +72,7 @@ def chat():
         "Content-Type": "application/json"
     }
     # Use the improved prompt template as systemPrompt
-    systemPrompt = PROMPT_TEMPLATE.strip()
+    systemPrompt = GENERAL_PROMPT_TEMPLATE.strip()
     # Reconstruct conversation history for this user
     history_messages = []
     if memory.buffer:

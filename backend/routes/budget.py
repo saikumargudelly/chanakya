@@ -35,6 +35,19 @@ def budget(user_id):
             expenses = {}
     if not isinstance(expenses, dict):
         expenses = {}
+
+    # --- FIX: Use timestamp from POST data if present ---
+    now = datetime.datetime.utcnow()
+    if "timestamp" in data:
+        try:
+            ts = data["timestamp"]
+            if isinstance(ts, str):
+                if ts.endswith('Z'):
+                    ts = ts.replace('Z', '+00:00')
+                now = datetime.datetime.fromisoformat(ts)
+        except Exception:
+            pass
+    print('DEBUG now:', now)  # <--- Add this line for debugging
     print('Received POST to /budget')
     print('user_id:', user_id)
     print('income:', income)
@@ -50,7 +63,6 @@ def budget(user_id):
     db = SessionLocal()
     try:
         # Upsert logic: find record for user & current month
-        now = datetime.datetime.utcnow()
         month_start = datetime.datetime(now.year, now.month, 1)
         next_month = datetime.datetime(now.year + (now.month // 12), ((now.month % 12) + 1), 1)
         query = db.query(Budget).filter(

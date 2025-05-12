@@ -1,7 +1,9 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { getPermaTipConversation } from '../services/permaChat';
 import { fetchMoodSessions, saveMoodSession, fetchRecentMoodSessions } from '../services/moodSession';
 import { useAuth } from './AuthContext';
+import ChatBubble from './ChatBubble';
+import QuickReplies from './QuickReplies';
 
 // Pool of PERMA questions for daily randomization
 const PERMA_QUESTIONS = [
@@ -389,59 +391,78 @@ const MoodTracker = () => {
           Chat with PERMA AI
         </button>
         {showTip && (
-          <div className="mt-4 w-full flex flex-col items-center">
-            {tipLoading && <div className="text-blue-500 animate-pulse">PERMA AI is thinking...</div>}
-            {!tipLoading && tipChat.length > 0 && (
-              <div className="bg-blue-50 dark:bg-blue-900 rounded-xl p-4 max-w-xl w-full text-left mb-2 shadow">
-                {tipChat.map((msg, i) => (
-                  <div key={i} className={msg.role === 'ai' ? 'text-blue-800 dark:text-blue-200 mb-2' : 'text-right text-gray-700 dark:text-gray-200 mb-2'}>
-                    <span className="font-semibold">{msg.role === 'ai' ? 'PERMA AI: ' : 'You: '}</span>{msg.text}
-                  </div>
-                ))}
-              </div>
-            )}
-            {!tipLoading && tipChat.length > 0 && (
-              <form
-                className="flex gap-2 w-full max-w-xl"
-                onSubmit={async e => {
-                  e.preventDefault();
-                  if (!tipInput.trim()) return;
-                  setTipChat(c => [...c, {role:'user', text: tipInput}]);
-                  setTipLoading(true);
-                  const perma_scores = lastSession.perma_scores;
-                  const summary = lastSession.summary;
-                  let history = '';
-                  try {
-                    const recentSessions = await fetchRecentMoodSessions(user_id, 5);
-                    history = recentSessions.map((s, i) => `Session ${recentSessions.length-i}:\nPERMA: ${JSON.stringify(s.perma_scores)}\nSummary: ${s.summary}\n`).join('\n');
-                  } catch {}
-                  const aiResp = await getPermaTipConversation({ perma_scores, summary, userMessage: tipInput, history });
-                  let tipText = aiResp.response;
-                  if (typeof tipText === 'string') {
-                    try {
-                      const parsed = JSON.parse(tipText);
-                      tipText = parsed.humanized || parsed.text || parsed.response || JSON.stringify(parsed);
-                    } catch (e) {}
-                  } else if (typeof tipText === 'object') {
-                    tipText = tipText.humanized || tipText.text || tipText.response || JSON.stringify(tipText);
-                  }
-                  setTipChat(c => [...c, {role:'ai', text: tipText || 'No response from AI.'}]);
-                  setTipLoading(false);
-                  setTipInput('');
-                }}
-              >
-                <input
-                  className="flex-1 rounded-lg border px-3 py-2 dark:bg-gray-800 dark:text-white"
-                  placeholder="Say something to PERMA AI..."
-                  value={tipInput}
-                  onChange={e => setTipInput(e.target.value)}
-                  disabled={tipLoading}
-                />
-                <button type="submit" className="px-4 py-2 rounded bg-blue-600 text-white font-semibold disabled:opacity-40" disabled={tipLoading || !tipInput.trim()}>Send</button>
-              </form>
-            )}
-          </div>
-        )}
+  <div className="mt-4 w-full flex flex-col items-center">
+    <div
+      className="bg-blue-50 dark:bg-blue-900 rounded-xl p-4 w-full text-left mb-2 shadow overflow-y-auto"
+      style={{ maxHeight: '350px', minHeight: '120px' }}
+    >
+      <div ref={el => {
+        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }} />
+      {tipChat.map((msg, i) => (
+        <ChatBubble
+          key={i}
+          sender={msg.role}
+          text={msg.text}
+          pillar={msg.pillar}
+          isTyping={tipLoading && i === tipChat.length - 1 && msg.role === 'ai'}
+        />
+      ))}
+      {tipLoading && <ChatBubble sender="ai" text="" isTyping pillar={tipChat.length > 0 && tipChat[tipChat.length-1].pillar} />}
+    </div>
+    {!tipLoading && tipChat.length > 0 && (
+      <QuickReplies
+        replies={["👍 Sounds good", "Give me a tip", "Tell me more", "😊", "How do I improve?"]}
+        onReply={r => {
+          setTipInput(r);
+          setTimeout(() => {
+            document.getElementById('perma-chat-input')?.focus();
+          }, 100);
+        }}
+      />
+    )}
+    <form
+      className="flex gap-2 w-full mt-2"
+      onSubmit={async e => {
+        e.preventDefault();
+        if (!tipInput.trim()) return;
+        setTipChat(c => [...c, { role: 'user', text: tipInput }]);
+        setTipLoading(true);
+        const perma_scores = lastSession.perma_scores;
+        const summary = lastSession.summary;
+        let history = '';
+        try {
+          const recentSessions = await fetchRecentMoodSessions(user_id, 5);
+          history = recentSessions.map((s, i) => `Session ${recentSessions.length - i}:\nPERMA: ${JSON.stringify(s.perma_scores)}\nSummary: ${s.summary}\n`).join('\n');
+        } catch {}
+        const aiResp = await getPermaTipConversation({ perma_scores, summary, userMessage: tipInput, history });
+        let tipText = aiResp.response;
+        if (typeof tipText === 'string') {
+          try {
+            const parsed = JSON.parse(tipText);
+            tipText = parsed.humanized || parsed.text || parsed.response || JSON.stringify(parsed);
+          } catch (e) {}
+        } else if (typeof tipText === 'object') {
+          tipText = tipText.humanized || tipText.text || tipText.response || JSON.stringify(tipText);
+        }
+        setTipChat(c => [...c, { role: 'ai', text: tipText || 'No response from AI.' }]);
+        setTipLoading(false);
+        setTipInput('');
+      }}
+    >
+      <input
+        id="perma-chat-input"
+        className="flex-1 rounded-lg border px-3 py-2 dark:bg-gray-800 dark:text-white"
+        placeholder="Say something to PERMA AI..."
+        value={tipInput}
+        onChange={e => setTipInput(e.target.value)}
+        disabled={tipLoading}
+        autoFocus
+      />
+      <button type="submit" className="px-4 py-2 rounded bg-blue-600 text-white font-semibold disabled:opacity-40" disabled={tipLoading || !tipInput.trim()}>Send</button>
+    </form>
+  </div>
+)}
       </div>
     </div>
   );
